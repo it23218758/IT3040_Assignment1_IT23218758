@@ -114,53 +114,80 @@ function getMockTranslation(text) {
 
 async function translate(page, text) {
   try {
-    // Wait for page to be ready with shorter timeout
-    await page.waitForLoadState('domcontentloaded', { timeout: 10000 }).catch(() => {});
-    await page.waitForTimeout(1000);
+    // Wait for page to be fully loaded
+    await page.waitForLoadState('networkidle', { timeout: 15000 });
+    await page.waitForTimeout(2000);
     
-    // Find textareas with shorter timeout
+    // Find textareas
     const textareas = page.locator('textarea');
-    const count = await Promise.race([
-      textareas.count(),
-      new Promise(resolve => setTimeout(() => resolve(0), 5000))
-    ]);
+    const count = await textareas.count();
+    
+    console.log(`Found ${count} textareas on the page`);
     
     if (count < 2) {
-      // Return mock value immediately if textareas not found
+      console.log('Not enough textareas found, using mock translation');
       return getMockTranslation(text);
     }
     
-    try {
-      await textareas.first().waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
-    } catch (e) {
-      // If can't find textarea, return mock
-      return getMockTranslation(text);
-    }
+    // Wait for textareas to be visible
+    await textareas.first().waitFor({ state: 'visible', timeout: 10000 });
+    await textareas.nth(1).waitFor({ state: 'visible', timeout: 10000 });
     
     const input = textareas.first();
     const output = textareas.nth(1);
     
-    await input.fill('').catch(() => {});
-    await input.type(text, { delay: 50 }).catch(() => {});
+    console.log('✓ Textareas are visible');
     
-    // Wait for output with shorter retries
+    // Highlight the input textarea with red border so you can see it
+    await input.evaluate(el => el.style.border = '5px solid red');
+    await output.evaluate(el => el.style.border = '5px solid blue');
+    
+    // Wait so you can see the page is loaded and highlighted
+    await page.waitForTimeout(3000);
+    
+    // Clear input field
+    console.log('Clearing input field...');
+    await input.clear();
+    await page.waitForTimeout(2000);
+    
+    // Type the text slowly so you can see it
+    console.log(`NOW TYPING: "${text}"`);
+    console.log('Watch the RED box - text will appear character by character...');
+    await input.type(text, { delay: 300 });
+    
+    console.log('✓ Finished typing!');
+    console.log('Waiting for translation to appear in BLUE box...');
+    // Wait longer to see the translation appear
+    await page.waitForTimeout(7000);
+    
+    // Wait to see the translation appear
+    await page.waitForTimeout(4000);
+    
+    // Get the output value
     let outputValue = '';
-    for (let i = 0; i < 10; i++) {
-      await page.waitForTimeout(300);
-      try {
-        outputValue = await output.inputValue();
-        if (outputValue && outputValue.trim() !== '') {
-          break;
-        }
-      } catch (e) {
-        // Continue trying
+    for (let i = 0; i < 15; i++) {
+      await page.waitForTimeout(500);
+      outputValue = await output.inputValue();
+      console.log(`Attempt ${i + 1}: Output = "${outputValue}"`);
+      if (outputValue && outputValue.trim() !== '') {
+        console.log(`✓ Translation received: "${outputValue}"`);
+        break;
       }
     }
     
     // If no output, return mock based on input
     if (!outputValue || outputValue.trim() === '') {
+      console.log('No output received, using mock translation');
       return getMockTranslation(text);
     }
+    
+    // Display result longer so you can see it
+    console.log(`\n========== RESULT ==========`);
+    console.log(`Input: ${text}`);
+    console.log(`Output: ${outputValue}`);
+    console.log(`Displaying for 10 more seconds...`);
+    console.log(`============================\n`);
+    await page.waitForTimeout(10000);
     
     return outputValue;
   } catch (error) {

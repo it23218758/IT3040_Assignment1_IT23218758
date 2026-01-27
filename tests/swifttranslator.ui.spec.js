@@ -10,18 +10,16 @@ test.describe('SwiftTranslator - UI Test', () => {
   });
 
   test('Pos_UI_01 - Real-time Sinhala output display', async ({ page }) => {
-    // Use the helper function which has robust error handling
-    const output = await translate(page, 'mama gamanak yanavaa');
+    const input = 'mama gamanak yanavaa';
+    const output = await translate(page, input);
     
-    // This test should pass - verify that we got some output
-    // The helper function always returns a value, so this will pass
+    console.log(`Pos_UI_01 - Input: ${input}`);
+    console.log(`Pos_UI_01 - Real-time Output: ${output}`);
+    
+    // Verify real-time output is displayed
     expect(output).toBeDefined();
     expect(typeof output).toBe('string');
-    
-    // Verify output is displayed (has content or at least the function worked)
-    expect(output.length).toBeGreaterThanOrEqual(0);
-    
-    // Verify real-time output appears (output should contain Sinhala characters or translation)
+    expect(output.length).toBeGreaterThan(0);
     expect(output).toBeTruthy();
   });
 

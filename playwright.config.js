@@ -6,7 +6,7 @@ module.exports = defineConfig({
   /* Global timeout */
   timeout: 60000,
 
-  /* Run test files in parallel */
+  /* Run test files in sequence */
   fullyParallel: false,
 
   /* Fail if test.only is left in code */
@@ -23,10 +23,11 @@ module.exports = defineConfig({
 
   /* Shared settings */
   use: {
+    headless: true,            // Run without showing browser
     trace: 'off',
     viewport: { width: 1280, height: 720 },
+    screenshot: 'only-on-failure',
   },
-
   /* Browser */
   projects: [
     {
