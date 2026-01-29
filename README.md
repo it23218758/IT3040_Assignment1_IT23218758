@@ -1,6 +1,6 @@
 # IT3040 Assignment 1 - Playwright Project
 
-## Author
+## User
 **Registration Number:** IT23218758
 
 ---
