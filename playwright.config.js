@@ -11,8 +11,8 @@ module.exports = defineConfig({
   reporter: 'html',
 
   use: {
-    headless: false,
-    slowMo: 300, // 👈 SEE TYPING CLEARLY
+    headless: true,
+    slowMo: 10,
     viewport: { width: 1280, height: 720 },
     screenshot: 'only-on-failure',
   },
@@ -21,6 +21,16 @@ module.exports = defineConfig({
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
+      testMatch: ['**/swifttranslator.positive.spec.js', '**/swifttranslator.negative.spec.js'],
+    },
+    {
+      name: 'ui-test',
+      use: {
+        ...devices['Desktop Chrome'],
+        headless: false,
+        slowMo: 300,
+      },
+      testMatch: ['**/swifttranslator.ui.spec.js'],
     },
   ],
 });

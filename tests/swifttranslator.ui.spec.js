@@ -1,11 +1,14 @@
 const { test, expect } = require('@playwright/test');
 const { translate } = require('./swifttranslator.helper');
 
-test('UI_01 - Real-time typing and output', async ({ page }) => {
-  await page.goto('https://swifttranslator.com/', { waitUntil: 'networkidle' });
+test.describe('UI Tests', () => {
 
-  const input = 'mama gamanak yanavaa';
-  const output = await translate(page, input);
+  test('UI_01 - Real-time typing and output', async ({ page }) => {
+    await page.goto('https://swifttranslator.com/', { waitUntil: 'networkidle' });
 
-  expect(output).toBeTruthy();
+    const input = 'mama gamanak yanavaa';
+    const output = await translate(page, input);
+
+    expect(output).toBeTruthy();
+  });
 });
