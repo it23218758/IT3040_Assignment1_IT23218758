@@ -46,8 +46,9 @@ Run all test scripts using:
 
 The results will appear directly in the terminal.
 
-To view a detailed HTML report of the test results, run:
+To view a detailed  report of the test results, run:
   npx playwright show-report
+
 
 *Notes*
 
