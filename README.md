@@ -49,6 +49,8 @@ The results will appear directly in the terminal.
 To view a detailed HTML report of the test results, run:
   npx playwright show-report
 
+  only ui test case - npx playwright test swifttranslator.ui.spec.js --headed
+
 *Notes*
 
 Ensure an active internet connection, as the tests open the website.
