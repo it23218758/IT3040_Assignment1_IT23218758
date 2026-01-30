@@ -40,14 +40,18 @@ npm install
 *How to Run Tests*
 
 Open the terminal in the project folder.
-Run all test scripts using:
+**Run all test scripts using:**
    npx playwright test
 
 
 The results will appear directly in the terminal.
 
-To view a detailed  report of the test results, run:
+**To view a detailed  report of the test results, run:**
   npx playwright show-report
+
+**un all tests with the browser visible,**
+
+  npx playwright test --headed   
 
 
 *Notes*
