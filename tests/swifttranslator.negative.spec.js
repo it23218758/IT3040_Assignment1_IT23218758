@@ -57,11 +57,12 @@ test.describe('SwiftTranslator - Negative Functional Tests', () => {
   });
 
   test('Neg_Fun_09 - Repeated same character excessively', async ({ page }) => {
-    const input = 'aaaaaaaaaaaaaaaaaaaaaaaaabbaaaa';
-    const actual = await translate(page, input);
-    expect(actual.length).toBeGreaterThan(0);
-  });
+  const input = 'hari hariiiii eekaaa mamaaa karalaa dhennammm';
+  const actual = await translate(page, input);
 
+  // Negative validation: system should still return some output
+  expect(actual.length).toBeGreaterThan(0);
+});
   test('Neg_Fun_10 - Mathematical expression mixed with text', async ({ page }) => {
     const input = 'meetingeka4pmthiyenneeikmanataenna';
     const actual = await translate(page, input);
