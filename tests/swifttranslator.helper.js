@@ -23,35 +23,54 @@ async function translate(page, text) {
 
   console.log('✍️  Typing completed');
 
-  // Wait for output element (try common selector or next sibling)
-  const outputSelectorCandidates = [
-    '#output',            // common id
-    '.output',            // common class
-    'textarea:nth-of-type(2)', // second textarea if site uses two
-    '.translation-result' // some sites
-  ];
+  // Wait for output to be generated (give it time to process)
+  await page.waitForTimeout(2000);
 
   let output = '';
-  for (const selector of outputSelectorCandidates) {
-    const exists = await page.locator(selector).count();
-    if (exists > 0) {
-      console.log(`📍 Found output container: "${selector}"`);
-      output = await page.locator(selector).textContent({ timeout: 5000 }).catch(() => '');
-      if (output && output.trim() !== text) break;
+
+  // Try to find output in different ways
+  // 1. Check for a div or element that shows translated text
+  const possibleOutputElements = await page.locator('body *').all();
+  
+  // 2. Look for element with Sinhala Unicode characters or content that's different from input
+  for (const element of possibleOutputElements) {
+    try {
+      const content = await element.textContent();
+      if (content && 
+          content.trim() && 
+          content.trim() !== text.trim() &&
+          content.length > 5 &&
+          content.length < 500) {
+        // Check if it contains Sinhala characters (Unicode range 0x0D80–0x0DFF)
+        if (/[\u0D80-\u0DFF]/.test(content)) {
+          output = content.trim();
+          console.log(`📍 Found Sinhala output in element`);
+          break;
+        }
+      }
+    } catch (e) {
+      // Continue searching
     }
   }
 
-  // If still no output, try second textarea as fallback
-  if (!output || output.trim() === '') {
-    const textareas = page.locator('textarea');
-    if ((await textareas.count()) > 1) {
-      output = await textareas.nth(1).inputValue();
+  // 3. Fallback: check for any visible div with text content
+  if (!output) {
+    const divs = page.locator('div, p, span').filter({ hasText: /[\u0D80-\u0DFF]/ });
+    if (await divs.count() > 0) {
+      output = await divs.first().textContent();
+      console.log(`📍 Found element with Sinhala characters`);
     }
   }
 
-  // Fallback: just read first textarea again
-  if (!output || output.trim() === '') {
-    output = await inputField.inputValue();
+  // 4. If input was typed in textarea, check if there's any sibling or parent with output
+  if (!output) {
+    const parent = await inputField.evaluate(el => {
+      return el.parentElement?.innerText || '';
+    });
+    if (parent && parent !== text && /[\u0D80-\u0DFF]/.test(parent)) {
+      output = parent.trim();
+      console.log(`📍 Found output in parent element`);
+    }
   }
 
   // Take screenshot for debugging
@@ -60,15 +79,15 @@ async function translate(page, text) {
   console.log('\n' + '='.repeat(80));
   console.log('📊 RESULT:');
   console.log('='.repeat(80));
-  console.log(`Singlish Input : "${text}"`);
-  console.log(`Sinhala Output : "${output || '(No translation received)'}"`);
+  console.log(`\n📝 Singlish Input  : "${text}"`);
+  console.log(`\n🇱🇰 Sinhala Output : "${output && output.trim() ? output : '(No translation received)'}"\n`);
 
-  if (output && output.trim() && output !== text) {
-    console.log('✅ PASS - Translation received!');
+  if (output && output.trim() && output.trim() !== text.trim()) {
+    console.log('✅ PASS - Translation received successfully!');
   } else {
     console.log('❌ FAIL - No valid translation received');
   }
-  console.log('='.repeat(80));
+  console.log('='.repeat(80) + '\n');
 
   return output;
 }

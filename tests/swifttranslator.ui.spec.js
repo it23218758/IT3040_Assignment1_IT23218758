@@ -10,5 +10,8 @@ test.describe('UI Tests', () => {
     const output = await translate(page, input);
 
     expect(output).toBeTruthy();
+
+    // Keep browser open to view output - removes 10 seconds before closing
+    await page.waitForTimeout(10000);
   });
 });

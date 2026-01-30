@@ -11,7 +11,7 @@ module.exports = defineConfig({
   reporter: 'html',
 
   use: {
-    headless: true,
+    headless: process.argv.includes('--headed') ? false : true,
     slowMo: 10,
     viewport: { width: 1280, height: 720 },
     screenshot: 'only-on-failure',
@@ -20,7 +20,10 @@ module.exports = defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: { 
+        ...devices['Desktop Chrome'],
+        headless: process.argv.includes('--headed') ? false : true,
+      },
       testMatch: ['**/swifttranslator.positive.spec.js', '**/swifttranslator.negative.spec.js'],
     },
     {
