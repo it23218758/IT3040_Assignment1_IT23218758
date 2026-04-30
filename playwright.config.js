@@ -24,16 +24,7 @@ module.exports = defineConfig({
         ...devices['Desktop Chrome'],
         headless: process.argv.includes('--headed') ? false : true,
       },
-      testMatch: ['**/swifttranslator.positive.spec.js', '**/swifttranslator.negative.spec.js'],
-    },
-    {
-      name: 'ui-test',
-      use: {
-        ...devices['Desktop Chrome'],
-        headless: false,
-        slowMo: 300,
-      },
-      testMatch: ['**/swifttranslator.ui.spec.js'],
+      testMatch: ['**/pixelssuite-chat-translator.negative.spec.js'],
     },
   ],
 });

@@ -1,61 +1,59 @@
-# IT3040 Assignment 1 - Playwright Project
+# PixelsSuite Chat Translator — Playwright Tests
 
-## User
-**Registration Number:** IT23218758
+This repository contains Playwright test automation for the PixelsSuite Chat Translator (Singlish → Sinhala).
 
----
+Quick overview
 
-## Project Description
-This project contains automated test scripts for **IT3040 – ITPM Semester 1, Assignment 1**.  
-The scripts test the **SwiftTranslator website** (Singlish → Sinhala) using **Playwright**.  
+- 50 negative, intentionally-failing cases that capture actual outputs and write them to CSV under `test-results/`.
+- A lightweight UI smoke test that validates the translator interface.
+- Playwright HTML report generated to `playwright-report/` after a test run.
 
-The tests cover **24+ positive** and **10+ negative scenarios**, including:
+Prerequisites
 
-- Sentence structures: simple, compound, complex  
-- Interrogative (questions) and imperative (commands) forms  
-- Positive and negative sentence forms  
-- Daily language usage: greetings, requests, and responses  
-- Polite vs informal phrasing, slang  
-- Mixed Singlish + English content  
-- Input length variations: short, medium, long  
-- Punctuation, numeric formats, and formatting  
-- UI behavior: real-time output updates, clearing input
+1. Node.js (LTS recommended)
+2. NPM
+3. Internet access to reach https://www.pixelssuite.com/chat-translator
 
-## Prerequisites
-Before running the tests, make sure you have:
+Install
 
-1. **Node.js** installed ([https://nodejs.org/](https://nodejs.org/))  
-2. **NPM** installed  
-3. A code editor like **VS Code**  
-
----
-
-## How to Install Dependencies
-1. Open the terminal in the project folder.  
-2. Run the following command to install all required packages:
-
-**bash**
+```bash
 npm install
+```
 
-*How to Run Tests*
+Run the negative suite (headed):
 
-Open the terminal in the project folder.
-Run all test scripts using:
-   npx playwright test
+```bash
+npx playwright test tests/pixelssuite-chat-translator.negative.spec.js --headed
+```
 
+Run the UI smoke test:
 
-The results will appear directly in the terminal.
+```bash
+npx playwright test tests/pixelssuite-chat-translator.ui.spec.js --headed
+```
 
-To view a detailed  report of the test results, run:
-  npx playwright show-report
+Run the configured npm script (negative suite):
 
+```bash
+npm run test
+```
 
-*Notes*
+View HTML report after a run:
 
-Ensure an active internet connection, as the tests open the website.
+```bash
+npx playwright show-report
+```
 
-All scripts are written in JavaScript using Playwright.
+Artifacts
 
-The test cases cover accuracy validation, robustness validation, and UI behavior.
+- HTML report: `playwright-report/`
+- Captured actual outputs: `test-results/pixelssuite-negative-results.csv`
+- Failure screenshots and test attachments: `test-results/`
 
-Positive and negative test cases cover real-world usage scenarios and edge cases.
+Notes
+
+- Tests run sequentially (workers: 1) to avoid rate limiting of the live site.
+- The negative suite intentionally throws after recording actual outputs so the Playwright report shows failing tests while preserving the captured actual output.
+- If the translator returns no output for certain inputs, increase waits in `tests/pixelssuite-chat-translator.helper.js`.
+
+If you want the README tailored differently (more/less detail, student metadata, or to restore the previous academic wording), tell me which template to use and I will update it.

@@ -1,12 +1,12 @@
 {
-  "name": "swifttranslator-playwright",
+  "name": "pixelssuite-chat-translator-playwright",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "playwright test tests/swifttranslator.ui.spec.js --headed",
-    "test:headed": "playwright test --headed",
-    "test:all": "playwright test"
+    "test": "playwright test tests/pixelssuite-chat-translator.negative.spec.js --headed",
+    "test:headed": "playwright test tests/pixelssuite-chat-translator.negative.spec.js --headed",
+    "test:all": "playwright test tests/pixelssuite-chat-translator.negative.spec.js"
   },
   "keywords": [],
   "author": "",
